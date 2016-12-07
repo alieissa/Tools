@@ -1,0 +1,27 @@
+{
+  "name": "tools",
+  "version": "0.0.1",
+  "description": "A wrapper around the npm installer",
+  "main": "apm.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alieissa/Tools.git"
+  },
+  "author": "Ali Eissa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alieissa/Tools/issues"
+  },
+  "homepage": "https://github.com/alieissa/Tools#readme",
+  "dependencies": {
+    "minimist": "^1.2.0",
+    "shelljs": "^0.7.5"
+  },
+  "devDependencies": {
+    "test1": "^0.4.5",
+    "test4": "^1.0.2"
+  }
+}
