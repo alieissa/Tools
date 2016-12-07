@@ -1,2 +1,4 @@
+apm/node_modules/
+apm/apm.py
 apm.py
 apm/test.json
