@@ -19,9 +19,5 @@
   "dependencies": {
     "minimist": "^1.2.0",
     "shelljs": "^0.7.5"
-  },
-  "devDependencies": {
-    "test1": "^0.4.5",
-    "test4": "^1.0.2"
   }
 }
