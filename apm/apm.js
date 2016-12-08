@@ -1,3 +1,6 @@
+#!/bin/node
+'use strict';
+
 let fs = require('fs');
 let path = require('path');
 let minimist = require('minimist');
@@ -11,6 +14,7 @@ function updatePackJson(updates,content, path) {
 
     fs.writeFile(path, JSON.stringify(content, null, 4));
 }
+
 function main() {
 
     let argv = minimist(process.argv.slice(2));
