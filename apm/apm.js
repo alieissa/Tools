@@ -6,8 +6,9 @@ let path = require('path');
 let minimist = require('minimist');
 let shelljs = require('shelljs');
 
-let sortObject = require('./util.js').sortObject;
+let sortObject = require('./util.js').sort;
 let install = require('./install.js');
+let uninstall = require('./uninstall.js');
 
 let parseArgv = require('./parse.js').parseArgv;
 let parseSaveFlags = require('./parse').parseSaveFlags;
@@ -17,7 +18,8 @@ let packageJsonPath = path.join(process.cwd(), 'package.json');
 let packJson = require(packageJsonPath);
 
 function updatePackJson(updates,content, path) {
-
+    console.log(updates);
+    // console.log(content);
     Object.keys(updates).forEach(key => content[key] = updates[key]);
 
     fs.writeFile(path, JSON.stringify(content, null, 4), (err) => {
@@ -56,11 +58,12 @@ function main() {
 
         case 'uninstall':
             if(destGroups.length > 0) {
-                uninstall.packs(args, destGroups, depInfo)
+                depInfo = uninstall.packs(args, destGroups, depInfo)
                 updatePackJson(depInfo, projInfo, packageJsonPath);
             }
             else if(typeof options['only'] !== 'undefined') {
-                uninstall.group(srcGroup, depInfo)
+                depInfo = uninstall.group(srcGroup, depInfo);
+                updatePackJson(depInfo, projInfo, packageJsonPath);
             }
             // uninstall(commandArgs, options,  packJson);
             break;
