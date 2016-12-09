@@ -4,40 +4,65 @@
 let fs = require('fs');
 let path = require('path');
 let minimist = require('minimist');
-let sortObject = require('./util.js').sortObject;
+let shelljs = require('shelljs');
 
+let sortObject = require('./util.js').sortObject;
 let install = require('./install.js');
-let packJson = require('./package.json');
+
+let parseArgv = require('./parse.js').parseArgv;
+let parseSaveFlags = require('./parse').parseSaveFlags;
+let parsePackageJson = require('./parse.js').parsePackageJson;
+
+let packageJsonPath = path.join(process.cwd(), 'package.json');
+let packJson = require(packageJsonPath);
 
 function updatePackJson(updates,content, path) {
+
     Object.keys(updates).forEach(key => content[key] = updates[key]);
 
-    fs.writeFile(path, JSON.stringify(content, null, 4));
+    fs.writeFile(path, JSON.stringify(content, null, 4), (err) => {
+        if(err) {
+            throw err;
+        }
+    });
 }
 
 function main() {
 
-    let argv = minimist(process.argv.slice(2));
+    let _argv = minimist(process.argv.slice(2));
+    let [command, args, options, flags] = parseArgv(_argv);
+    let [depInfo, projInfo] = parsePackageJson(packJson);
 
-    let command = argv['_'];
-    let commandName = command[0];
-    let commandArgs = command.slice(1);
+    // installation groups defined in flags as --save-group
+    let destGroups = parseSaveFlags(flags);
+    let srcGroup = `${options['only']}Dependencies`;
 
-    // All options have a true val in argv object
-    let flags = Object.keys(argv).filter(arg => argv[arg] === true);
-    let options = Object.keys(argv)
-        .filter(arg => arg !== '_' && argv[arg] !== true)
-        .map(arg => ({[arg]: argv[arg]}))
-    //
-    // console.log(argv)
-    switch(commandName) {
+    if(typeof options['only'] === 'undefined'  && destGroups.length === 0) {
+        shelljs.exec(_argv);
+        return;
+    }
+
+    switch(command) {
+
         case'install':
-            let [installedDeps, packInfo] = install(commandArgs, options, flags, packJson);
-            updatePackJson(installedDeps, packInfo, path.join(__dirname, 'test.json'));
+            if(destGroups.length > 0) {
+                install.packs(args, destGroups, depInfo)
+                updatePackJson(depInfo, projInfo, packageJsonPath);
+            }
+            else if(typeof options['only'] !== 'undefined') {
+                install.group(srcGroup, depInfo)
+            }
             break;
 
         case 'uninstall':
-            uninstall(commandArgs, options,  packJson);
+            if(destGroups.length > 0) {
+                uninstall.packs(args, destGroups, depInfo)
+                updatePackJson(depInfo, projInfo, packageJsonPath);
+            }
+            else if(typeof options['only'] !== 'undefined') {
+                uninstall.group(srcGroup, depInfo)
+            }
+            // uninstall(commandArgs, options,  packJson);
             break;
 
         default:
