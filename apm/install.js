@@ -5,7 +5,7 @@ let shelljs = require('shelljs');
 let parseNPMOutput = require('./parse.js').parseNPMOutput;
 let parseSaveFlags = require('./parse.js').parseSaveFlags;
 
-let sortObject = require('./util.js').sortObject;
+let sortObject = require('./util.js').sort;
 
 // After installation adds packs to group list
 // if no group, creates new one
